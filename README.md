@@ -6,8 +6,9 @@
 2. My break-down has been updated to include two state machine systems. The first is the player movement state machine, implemented in the Visual Scripting movement graph, which switches between two states — Walking and Running — based on whether the player is holding Left Shift. This directly affects the Character Controller speed and the Animator float parameter, linking the movement system to both the physics and animation systems. The second is the flashlight state machine, implemented in C# code, which toggles between an On state and an Off state each time the player presses F. In the On state, the Light component is enabled, illuminating the environment; in the Off state, it is disabled, plunging the area into darkness.
 
    These two state machines are closely related to other systems in the game. The movement state machine connects to the animation system through the Animator Set Float node, ensuring that walking and running animations match the player's actual speed, and it also indirectly relates to the audio system since footstep sounds are triggered based on the same axis input values. The flashlight state machine is related to the monster detection system, as monsters are designed to sense the flashlight's light and begin chasing the player when it is on — meaning the player must actively decide when to toggle the flashlight, balancing visibility against the risk of being detected.
-   [New break down]<img width="1700" height="1080" alt="image" src="https://github.com/user-attachments/assets/e770e445-747d-4a40-8227-5a0b09561d81" />
 
+   [New break down]<img width="1700" height="1080" alt="image" src="https://github.com/user-attachments/assets/e770e445-747d-4a40-8227-5a0b09561d81" />
+   I use AI to help me draw this new breakdown
 ## Milestone 2 Devlog
 Milestone 2 Devlog goes here.
 ## Milestone 3 Devlog
