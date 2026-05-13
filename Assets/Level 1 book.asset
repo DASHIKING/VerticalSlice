@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 684f58485feeeb54da4064c6dd085e72, type: 3}
+  m_Name: Level 1 book
+  m_EditorClassIdentifier: 
+  Title: Operation Introduction
+  Content: '1. WASD to move
+
+    2. Left shift to run
+
+    3. F to turn on/off the
+    light
+
+    4. ESC to open/close this reminder
+
+    5. Click to lock/unlock cursor'
