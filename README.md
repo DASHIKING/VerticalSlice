@@ -12,6 +12,7 @@
 ## Milestone 2 Devlog
 
 1.The feature I am building is the handcart and collection point system, which allows the player to drag a cart around the museum, place collected items into it, and submit those items at a collection point to progress toward escaping.
+
 Step 1: Setting Up the Handcart (Least Complex)
 The goal is to make the handcart a physical object that the player can drag around the scene.
 
@@ -44,8 +45,8 @@ Test: Push the cart into the collection zone with enough items and press E — i
 
 3. In my game, I bridge Visual Scripting and C# code in the player movement and footstep audio system. The Visual Scripting graph on the Player handles the movement logic — it reads Horizontal and Vertical axis inputs using Get Axis nodes, combines them into a Vector3, passes it through Transform Direction so movement follows the camera, and feeds the result into Character Controller Simple Move. On the C# side, the FlashlightToggle.cs script exposes a static boolean variable IsFlashlightOn that is updated every time the player presses F to toggle the flashlight. This variable is then read directly by MonsterAI.cs and SanitySystem.cs in their Update loops — MonsterAI uses it to increase the monster's detection range when the flashlight is on, and SanitySystem uses it to determine whether the player's sanity should recover or continue decreasing. This hybrid approach works well because the movement input logic is simple and readable as a Visual Scripting graph, while the flashlight state needs to be shared across multiple C# systems simultaneously, which is much cleaner to handle as a static variable in code than to pass through graph nodes. The C# scripts involved are FlashlightToggle.cs, MonsterAI.cs, and SanitySystem.cs.
 
+4. I would like to be graded on my NavMesh-based monster AI system, which can be found on any of the monster GameObjects in the scene — select a monster, and you will see the NavMesh Agent component along with the MonsterAI and MonsterStats scripts that drive the patrol, chase, attack, and lost states.
 
-5. I would like to be graded on my NavMesh-based monster AI system, which can be found on any of the monster GameObjects in the scene — select a monster, and you will see the NavMesh Agent component along with the MonsterAI and MonsterStats scripts that drive the patrol, chase, attack, and lost states.
 ## Milestone 3 Devlog
 Milestone 3 Devlog goes here.
 ## Milestone 4 Devlog
