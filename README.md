@@ -9,6 +9,7 @@
 
    <img width="1700" height="1080" alt="image" src="https://github.com/user-attachments/assets/e770e445-747d-4a40-8227-5a0b09561d81" />
    I use AI to help me draw this new breakdown
+   
 ## Milestone 2 Devlog
 
 1.The feature I am building is the handcart and collection point system, which allows the player to drag a cart around the museum, place collected items into it, and submit those items at a collection point to progress toward escaping.
