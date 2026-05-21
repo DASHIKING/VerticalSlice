@@ -13,13 +13,8 @@ MonoBehaviour:
   m_Name: Level 1 book
   m_EditorClassIdentifier: 
   Title: Operation Introduction
-  Content: '1. WASD to move
-
-    2. Left shift to run
-
-    3. F to turn on/off the
-    light
-
-    4. ESC to open/close this reminder
-
-    5. Click to lock/unlock cursor'
+  Content: "Controls:\r\nWASD - Move\r\nF - Flashlight\r\nE - Push cart / Escape\r\n\rLeft
+    Click - pick up item, lock the mouse\nRight Click - Submit items\nLeft shift
+    - run\nUse the cart to collect the items. After collecting enough items, push
+    the cart to the green submission point to submit them. Then run back to the starting
+    point and press 'E' to escape."

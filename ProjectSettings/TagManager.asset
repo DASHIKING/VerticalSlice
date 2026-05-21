@@ -7,6 +7,9 @@ TagManager:
   - Floor
   - Wall
   - Seiling
+  - HandCart
+  - Handcart
+  - CollectionPoint
   layers:
   - Default
   - TransparentFX

@@ -5,34 +5,37 @@ public class MonsterAI : MonoBehaviour
 {
     [Header("References")]
     public MonsterStats stats;
-    public Transform[] patrolPoints;      // 把巡逻点拖进来
-    public Transform player;             // 把Player拖进来
+    public Transform[] patrolPoints;
+    public Transform player;
 
-    // 状态枚举
     public enum MonsterState { Patrol, Chase, Attack, Lost }
     public MonsterState currentState = MonsterState.Patrol;
 
     private NavMeshAgent agent;
-    private int currentPatrolIndex = 0;  // 当前目标巡逻点
-    private float lostTimer = 0f;        // 丢失玩家计时器
-    private float attackTimer = 0f;      // 攻击冷却计时器
+    private Animator animator;          // 新增
+    private int currentPatrolIndex = 0;
+    private float lostTimer = 0f;
+    private float attackTimer = 0f;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>(); // 新增：自动获取Animator
+
         agent.speed = stats.data.patrolSpeed;
 
-        // 自动找到Player（也可以手动拖）
         if (player == null)
             player = GameObject.FindWithTag("Player").transform;
 
-        // 开始巡逻
         GoToNextPatrolPoint();
     }
 
     void Update()
     {
         attackTimer -= Time.deltaTime;
+
+        // 每帧更新Speed参数（用于控制Walk/Idle动画）
+        animator.SetFloat("Speed", agent.velocity.magnitude);
 
         switch (currentState)
         {
@@ -51,16 +54,13 @@ public class MonsterAI : MonoBehaviour
         }
     }
 
-    // ── PATROL ──────────────────────────────────────────
     void HandlePatrol()
     {
         agent.speed = stats.data.patrolSpeed;
 
-        // 到达巡逻点后前往下一个
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
             GoToNextPatrolPoint();
 
-        // 检测玩家
         if (CanSeePlayer())
             ChangeState(MonsterState.Chase);
     }
@@ -72,13 +72,11 @@ public class MonsterAI : MonoBehaviour
         currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
     }
 
-    // ── CHASE ───────────────────────────────────────────
     void HandleChase()
     {
         agent.speed = stats.data.chaseSpeed;
         agent.destination = player.position;
 
-        // 够近就攻击
         float dist = Vector3.Distance(transform.position, player.position);
         if (dist <= stats.data.attackRange)
         {
@@ -86,7 +84,6 @@ public class MonsterAI : MonoBehaviour
             return;
         }
 
-        // 看不到玩家就开始计时
         if (!CanSeePlayer())
         {
             lostTimer += Time.deltaTime;
@@ -95,83 +92,92 @@ public class MonsterAI : MonoBehaviour
         }
         else
         {
-            lostTimer = 0f; // 看得到就重置计时
+            lostTimer = 0f;
         }
     }
 
-    // ── ATTACK ──────────────────────────────────────────
     void HandleAttack()
     {
-        agent.destination = transform.position; // 停下来
+        agent.destination = transform.position;
         transform.LookAt(player);
 
         float dist = Vector3.Distance(transform.position, player.position);
 
-        // 玩家跑远了就继续追
         if (dist > stats.data.attackRange + 0.5f)
         {
             ChangeState(MonsterState.Chase);
             return;
         }
 
-        // 攻击冷却结束就攻击
         if (attackTimer <= 0f)
         {
             Attack();
-            attackTimer = 1.5f; // 1.5秒攻击一次
+            attackTimer = 1.5f;
         }
     }
 
     void Attack()
     {
-        // 找到玩家的血量脚本并扣血
         PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
         if (playerHealth != null)
             playerHealth.TakeDamage(stats.data.attackDamage);
     }
 
-    // ── LOST ────────────────────────────────────────────
     void HandleLost()
     {
         agent.speed = stats.data.patrolSpeed;
 
-        // 在玩家最后位置附近转一转
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
-            // 搜索完毕，回到巡逻
             ChangeState(MonsterState.Patrol);
             GoToNextPatrolPoint();
         }
     }
 
-    // ── 工具方法 ─────────────────────────────────────────
-    void ChangeState(MonsterState newState)
+    public void ChangeState(MonsterState newState)
     {
+        if (currentState == newState) return;
         lostTimer = 0f;
         currentState = newState;
 
-        if (newState == MonsterState.Lost)
+        // 每次切换状态时更新动画参数
+        switch (newState)
         {
-            // 去玩家最后出现的位置搜索
-            agent.destination = player.position;
+            case MonsterState.Patrol:
+                animator.SetBool("IsChasing", false);
+                animator.SetBool("IsAttacking", false);
+                animator.SetBool("IsLost", false);
+                break;
+
+            case MonsterState.Chase:
+                animator.SetBool("IsChasing", true);
+                animator.SetBool("IsAttacking", false);
+                animator.SetBool("IsLost", false);
+                break;
+
+            case MonsterState.Attack:
+                animator.SetBool("IsAttacking", true);
+                agent.destination = player.position;
+                break;
+
+            case MonsterState.Lost:
+                animator.SetBool("IsChasing", false);
+                animator.SetBool("IsLost", true);
+                agent.destination = player.position;
+                break;
         }
     }
 
-    
-
-    // 检测玩家是否可见
     bool CanSeePlayer()
     {
         float dist = Vector3.Distance(transform.position, player.position);
 
-        // 计算实际检测范围（手电筒开着时更容易被发现）
         float range = stats.data.detectionRange;
         if (FlashlightToggle.IsFlashlightOn)
             range += stats.data.flashlightBonus;
 
         if (dist > range) return false;
 
-        // Raycast 检测视线是否被墙挡住
         Vector3 dirToPlayer = (player.position - transform.position).normalized;
         RaycastHit hit;
         if (Physics.Raycast(transform.position + Vector3.up, dirToPlayer, out hit, range))

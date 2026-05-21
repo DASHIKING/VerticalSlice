@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Mutant7 skin1 Data
   m_EditorClassIdentifier: 
   monsterName: Monster
-  maxHP: 100
-  attackDamage: 10
-  patrolSpeed: 2
-  chaseSpeed: 4.5
-  detectionRange: 10
+  maxHP: 10
+  attackDamage: 30
+  patrolSpeed: 3
+  chaseSpeed: 7
+  detectionRange: 15
   flashlightBonus: 8
-  attackRange: 1.8
+  attackRange: 2
   lostPlayerTime: 5
