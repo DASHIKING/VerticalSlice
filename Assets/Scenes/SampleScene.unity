@@ -6613,6 +6613,9 @@ MonoBehaviour:
   lightRecoveryRate: 1
   sanitySlider: {fileID: 2092277968}
   sanityText: {fileID: 1661669555}
+  sanityDistortionMat: {fileID: 2100000, guid: 6be574ccb6354fe44bbb38edc278ed4b, type: 2}
+  maxDistortionIntensity: 0.1
+  distortionThreshold: 80
 --- !u!1001 &1024245187
 PrefabInstance:
   m_ObjectHideFlags: 0
