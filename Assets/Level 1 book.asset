@@ -17,4 +17,5 @@ MonoBehaviour:
     Click - pick up item, lock the mouse\nRight Click - Submit items\nLeft shift
     - run\nUse the cart to collect the items. After collecting enough items, push
     the cart to the green submission point to submit them. Then run back to the starting
-    point and press 'E' to escape."
+    point and press 'E' to escape.\nDon't let the sanity level be too low; terrifying
+    things could happen."
