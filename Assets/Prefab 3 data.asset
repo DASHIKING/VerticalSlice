@@ -16,8 +16,8 @@ MonoBehaviour:
   maxHP: 80
   attackDamage: 25
   patrolSpeed: 3
-  chaseSpeed: 5
-  detectionRange: 15
+  chaseSpeed: 4
+  detectionRange: 10
   flashlightBonus: 10
   attackRange: 1.8
-  lostPlayerTime: 7
+  lostPlayerTime: 5

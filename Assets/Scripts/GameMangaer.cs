@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour
     public GameObject winPanel;
     public GameObject gameOverPanel;
 
+    [Header("Escape Pillar")]
+    public GameObject escapePillar;
+
     void Awake()
     {
         Instance = this;
@@ -26,6 +29,8 @@ public class GameManager : MonoBehaviour
             gameOverPanel.SetActive(false);
         if (escapeStatusText != null)
             escapeStatusText.text = "0/" + totalCollectionPoints + " completed";
+        if (escapePillar != null)
+            escapePillar.SetActive(false);
     }
 
     public void OnCollectionPointCompleted()
@@ -41,6 +46,12 @@ public class GameManager : MonoBehaviour
                 escapeStatusText.text = completedPoints +
                     "/" + totalCollectionPoints + " completed";
         }
+
+        if (completedPoints >= totalCollectionPoints)
+        {
+            if (escapePillar != null)
+                escapePillar.SetActive(true);
+        }
     }
 
     public bool CanEscape()
@@ -48,11 +59,15 @@ public class GameManager : MonoBehaviour
         return canEscape;
     }
 
+    public int GetCompletedPoints()
+    {
+        return completedPoints;
+    }
+
     public void WinGame()
     {
         if (winPanel != null)
             winPanel.SetActive(true);
-
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -62,7 +77,6 @@ public class GameManager : MonoBehaviour
     {
         if (gameOverPanel != null)
             gameOverPanel.SetActive(true);
-
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;

@@ -8,20 +8,26 @@ public class MonsterAI : MonoBehaviour
     public Transform[] patrolPoints;
     public Transform player;
 
+    [Header("Audio")]
+    public AudioClip detectSound;
+
     public enum MonsterState { Patrol, Chase, Attack, Lost }
     public MonsterState currentState = MonsterState.Patrol;
 
     private NavMeshAgent agent;
-    private Animator animator;          // 新增
+    private Animator animator;
+    private AudioSource audioSource;
     private int currentPatrolIndex = 0;
     private float lostTimer = 0f;
     private float attackTimer = 0f;
+    private bool isWaiting = false;
+    private float waitTimer = 0f;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>(); // 新增：自动获取Animator
-
+        animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
         agent.speed = stats.data.patrolSpeed;
 
         if (player == null)
@@ -33,9 +39,7 @@ public class MonsterAI : MonoBehaviour
     void Update()
     {
         attackTimer -= Time.deltaTime;
-
-        // 每帧更新Speed参数（用于控制Walk/Idle动画）
-        animator.SetFloat("Speed", agent.velocity.magnitude);
+        animator.SetFloat("Speed", agent.velocity.magnitude, 0.1f, Time.deltaTime);
 
         switch (currentState)
         {
@@ -58,8 +62,24 @@ public class MonsterAI : MonoBehaviour
     {
         agent.speed = stats.data.patrolSpeed;
 
-        if (!agent.pathPending && agent.remainingDistance < 0.5f)
-            GoToNextPatrolPoint();
+        if (!agent.pathPending && agent.remainingDistance < 0.5f && agent.hasPath)
+        {
+            if (!isWaiting)
+            {
+                isWaiting = true;
+                waitTimer = Random.Range(1f, 3f);
+            }
+        }
+
+        if (isWaiting)
+        {
+            waitTimer -= Time.deltaTime;
+            if (waitTimer <= 0f)
+            {
+                isWaiting = false;
+                GoToNextPatrolPoint();
+            }
+        }
 
         if (CanSeePlayer())
             ChangeState(MonsterState.Chase);
@@ -68,8 +88,15 @@ public class MonsterAI : MonoBehaviour
     void GoToNextPatrolPoint()
     {
         if (patrolPoints.Length == 0) return;
+
+        int newIndex;
+        do
+        {
+            newIndex = Random.Range(0, patrolPoints.Length);
+        } while (newIndex == currentPatrolIndex && patrolPoints.Length > 1);
+
+        currentPatrolIndex = newIndex;
         agent.destination = patrolPoints[currentPatrolIndex].position;
-        currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
     }
 
     void HandleChase()
@@ -137,10 +164,10 @@ public class MonsterAI : MonoBehaviour
     public void ChangeState(MonsterState newState)
     {
         if (currentState == newState) return;
+
         lostTimer = 0f;
         currentState = newState;
 
-        // 每次切换状态时更新动画参数
         switch (newState)
         {
             case MonsterState.Patrol:
@@ -153,6 +180,9 @@ public class MonsterAI : MonoBehaviour
                 animator.SetBool("IsChasing", true);
                 animator.SetBool("IsAttacking", false);
                 animator.SetBool("IsLost", false);
+
+                if (audioSource != null && detectSound != null)
+                    audioSource.PlayOneShot(detectSound);
                 break;
 
             case MonsterState.Attack:

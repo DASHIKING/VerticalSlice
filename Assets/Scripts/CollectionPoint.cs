@@ -14,6 +14,10 @@ public class CollectionPoint : MonoBehaviour
     [Header("Visual")]
     public Renderer floorRenderer;
 
+    [Header("Pillar")]
+    
+    public GameObject glowPillar;  // 把绿色柱子拖进来
+
     private HandcartController cartInside = null;
 
     void Start()
@@ -85,6 +89,10 @@ public class CollectionPoint : MonoBehaviour
 
         if (floorRenderer != null)
             floorRenderer.material.color = Color.green;
+
+        // 隐藏绿色柱子
+        if (glowPillar != null)
+            glowPillar.SetActive(false);
 
         GameManager.Instance?.OnCollectionPointCompleted();
     }
